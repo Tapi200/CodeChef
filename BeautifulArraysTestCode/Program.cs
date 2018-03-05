@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeChef
 {
@@ -17,22 +15,48 @@ namespace CodeChef
             return false;
         }
 
+        public static void Iterate(List<int> seq)
+        {
+            int x = seq[0];
+            int y = seq[1];
+            seq.Remove(x);
+            seq.Remove(y);
+            seq.Add(x + y);
+        }
+
+        public static void Iterate2(List<int> seq, List<int> minorSeq2)
+        {
+            int x = minorSeq2[0];
+            int y = minorSeq2[1];
+            seq.Remove(x);
+            seq.Remove(y);
+        }
+
+        public static void Iterate13(List<int> seq, List<int> minorSeq1, List<int> minorSeq3)
+        {
+            int x = minorSeq1[0];
+            int y = minorSeq3[0];
+            seq.Remove(x);
+            seq.Remove(y);
+            seq.Add(x + y);
+        }
+
         static void Main(string[] args)
         {
             Stopwatch stopwatch = new Stopwatch();
-            System.Threading.Thread.Sleep(500);
             stopwatch.Start();
+            System.Threading.Thread.Sleep(500);
 
-            Console.WriteLine("Enter number of test cases");
+            //Console.WriteLine("Enter number of test cases");
             int numberOfTestCases = Convert.ToInt32(Console.ReadLine());
 
-            for(int k = 1; k <= numberOfTestCases; k++)
+            for (int k = 1; k <= numberOfTestCases; k++)
             {
-                Console.WriteLine("Enter sequence size");
+                //Console.WriteLine("Enter sequence size");
                 int seqSize = Convert.ToInt32(Console.ReadLine());
 
-                Console.WriteLine("Enter the sequence numbers");
-                List<int> primeSeq = Console.ReadLine()
+                //Console.WriteLine("Enter the sequence numbers");
+                var primeSeq = Console.ReadLine()
                     .Split(' ')
                     .Select(m => Convert.ToInt32(m))
                     .ToList();
@@ -43,55 +67,55 @@ namespace CodeChef
 
                 while (true)
                 {
-                start:
+                    start:
+                    var primeSeq1 = primeSeq.Where(n => n % 4 == 1).ToList();
+                    var primeSeq2 = primeSeq.Where(n => n % 4 == 2).ToList();
+                    var primeSeq3 = primeSeq.Where(n => n % 4 == 3).ToList();
+
                     if (IsBeautiful(primeSeq))
                     {
-                        Console.WriteLine("Sequence is beautiful");
+                        //Console.WriteLine("Sequence is beautiful");
                         break;
                     }
 
                     if (primeSeq.Count == 1)
                     {
-                        Console.WriteLine("sequence cannot be beautiful");
+                        //Console.WriteLine("sequence cannot be beautiful");
                         break;
                     }
 
-                    for (int i = 1; i < primeSeq.Count; i++)
+                    if (primeSeq2.Count >= 2)
                     {
-                        for (int j = 0; j < i; j++)
-                        {
-                            if ((primeSeq[i] + primeSeq[j]) % 4 == 0)
-                            {
-                                int x = primeSeq[i];
-                                int y = primeSeq[j];
-
-                                primeSeq.Remove(x);
-                                primeSeq.Remove(y);
-                                //primeSeq.Add(x + y);
-                                counta++;
-                                goto start;
-                            }
-                            if ((primeSeq[i] + primeSeq[j]) % 2 == 0)
-                            {
-                                int x = primeSeq[i];
-                                int y = primeSeq[j];
-
-                                primeSeq.Remove(x);
-                                primeSeq.Remove(y);
-                                //primeSeq.Add(x + y);
-                                counta++;
-                                goto start;
-                            }
-                        }
+                        Iterate2(primeSeq, primeSeq2);
+                        counta++;
+                        goto start;
                     }
-                    int a = primeSeq[0];
-                    int b = primeSeq[1];
 
-                    primeSeq.Remove(a);
-                    primeSeq.Remove(b);
-                    primeSeq.Add(a + b);
+                    if (primeSeq1.Count >= 1 && primeSeq3.Count >= 1)
+                    {
+                        Iterate13(primeSeq, primeSeq1, primeSeq3);
+                        counta++;
+                        goto start;
+                    }
+
+                    if (primeSeq1.Count >= 4)
+                    {
+                        Iterate2(primeSeq, primeSeq1);
+                        counta++;
+                        goto start;
+                    }
+
+                    if (primeSeq3.Count >= 4)
+                    {
+                        Iterate2(primeSeq, primeSeq3);
+                        counta++;
+                        goto start;
+                    }
+
+                    Iterate(primeSeq);
                     counta++;
                 }
+
                 Console.WriteLine("number of reps is {0}", counta);
                 stopwatch.Stop();
                 Console.WriteLine(stopwatch.Elapsed);
